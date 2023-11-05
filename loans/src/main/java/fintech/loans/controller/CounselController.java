@@ -22,7 +22,7 @@ public class CounselController {
     @PostMapping("/loans/counsel")
     public CounselResponseDto counselSave(@RequestBody CounselRequestDto counselRequestDto){
         Counsel saveCounsel = counselService.save(counselRequestDto);
-        return new CounselResponseDto(saveCounsel.getName(),saveCounsel.getDate().getCreateDate());
+        return new CounselResponseDto(saveCounsel.getName(),saveCounsel.getCreateDate());
     }
 
 }

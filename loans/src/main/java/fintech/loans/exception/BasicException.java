@@ -8,22 +8,15 @@ import lombok.Setter;
 @Setter
 public class BasicException extends RuntimeException {
 
-    public BasicException() {
-    }
+    private String code;
 
     public BasicException(String message) {
         super(message);
+        this.code = "999999";
     }
 
-    public BasicException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    public BasicException(Throwable cause) {
-        super(cause);
-    }
-
-    public BasicException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(message, cause, enableSuppression, writableStackTrace);
+    public BasicException(String message, String code) {
+        super(message);
+        this.code = code;
     }
 }

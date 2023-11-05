@@ -11,7 +11,8 @@ import java.time.LocalDateTime;
 @Entity
 @Setter
 @Getter
-public class Counsel{
+@ToString
+public class Counsel extends Date{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,21 +24,12 @@ public class Counsel{
     @Column(columnDefinition = "VARCHAR(20)")
     private String phone;
 
-    private String email;
+    private String email = "";
 
     @Column(columnDefinition = "TEXT")
-    private String memo;
+    private String memo = "";
 
+    @Column(columnDefinition = "DATETIME")
     private LocalDateTime counselDate;
 
-    @Embedded //공통필드 선언 후 사용시 이용
-    private Date date;
-
-
-    public Counsel(String name, String phone, String email, String memo) {
-        this.name = name;
-        this.phone = phone;
-        this.email = email;
-        this.memo = memo;
-    }
 }

@@ -1,25 +1,30 @@
 package fintech.loans.domain.common;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import javax.persistence.Embeddable;
-import javax.persistence.PrePersist;
+import javax.persistence.*;
 import java.time.LocalDateTime;
 
-@Embeddable // 공통으로 사용할 필드 선언
+import static com.fasterxml.jackson.annotation.JsonInclude.*;
+
+@JsonInclude(Include.NON_NULL)
 @Getter
 @Setter
+@MappedSuperclass
+@EntityListeners(AuditingEntityListener.class)
 public class Date {
 
+    @CreatedDate
+    @Column(updatable = false, columnDefinition = "DATETIME")
     private LocalDateTime createDate;
 
+    @LastModifiedDate
+    @Column(columnDefinition = "DATETIME")
     private LocalDateTime updateDate;
 
-    @PrePersist
-    public void prePersist() {
-        if (createDate == null) {
-            createDate = LocalDateTime.now();
-        }
-    }
 }
