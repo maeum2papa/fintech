@@ -19,7 +19,11 @@ public class CounselServiceImpl implements CounselService{
 
     @Override
     public Counsel save(CounselRequestDto counselRequestDto) {
-        System.out.println("counselRequestDto = " + counselRequestDto.getClass());
+
+        if(counselRequestDto.getName() == null || counselRequestDto.getName().isEmpty()){
+            throw new BasicException("name은 필수 입니다.");
+        }
+
         Counsel counsel = new Counsel(counselRequestDto.getName(),counselRequestDto.getPhone(),counselRequestDto.getEmail(),counselRequestDto.getMemo());
         Counsel saveCounsel = counselRepository.save(counsel);
         return saveCounsel;
