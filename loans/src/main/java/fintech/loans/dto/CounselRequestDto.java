@@ -11,9 +11,7 @@ import java.time.LocalDateTime;
 
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-@Getter
-@Setter
+@Data
 public class CounselRequestDto {
     private String name;
     private String phone;

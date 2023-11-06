@@ -15,7 +15,7 @@ public class ApiException extends RuntimeException{
 
     @ExceptionHandler(BasicException.class)
     protected ExceptionDto ApiException(BasicException e, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
-        log.error("[ERROR:"+e.getCode()+"] "+e.getMessage());
+        log.error("[ERROR:{}] {}",e.getCode(),e.getMessage());
         return new ExceptionDto(e.getCode(),e.getMessage());
     }
 }

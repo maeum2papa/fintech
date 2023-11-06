@@ -6,9 +6,7 @@ import java.time.LocalDateTime;
 
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-@Getter
-@Setter
+@Data
 public class ExceptionDto {
 
     private String code;
