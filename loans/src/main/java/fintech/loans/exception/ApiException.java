@@ -19,7 +19,7 @@ public class ApiException{
             Exception e
     ) {
 
-        log.error("{}",e);
+        log.error("{}",e.toString());
 
         ResponseDto<Object> build = ResponseDto
                 .builder()

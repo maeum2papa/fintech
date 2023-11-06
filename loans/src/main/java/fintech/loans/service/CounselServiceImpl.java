@@ -34,7 +34,7 @@ public class CounselServiceImpl implements CounselService{
                         .build();
 
         Counsel saveCounsel = counselRepository.save(counsel);
-        
+
         return saveCounsel;
     }
 
