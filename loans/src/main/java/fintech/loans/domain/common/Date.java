@@ -12,11 +12,11 @@ import java.time.LocalDateTime;
 
 import static com.fasterxml.jackson.annotation.JsonInclude.*;
 
-@JsonInclude(Include.NON_NULL)
+@JsonInclude(Include.NON_NULL) // 값이 NULL이 아닌 경우에만 포함
 @Getter
 @Setter
 @MappedSuperclass
-@EntityListeners(AuditingEntityListener.class)
+@EntityListeners(AuditingEntityListener.class) //@CreatedDate 및 @LastModifiedDate 필드에 자동으로 생성 및 수정 일자를 설정
 public class Date {
 
     @CreatedDate

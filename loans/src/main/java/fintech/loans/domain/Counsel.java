@@ -9,9 +9,8 @@ import javax.validation.constraints.NotEmpty;
 import java.time.LocalDateTime;
 
 @Entity
-@Setter
-@Getter
-@ToString
+@Data
+@Builder
 public class Counsel extends Date{
 
     @Id

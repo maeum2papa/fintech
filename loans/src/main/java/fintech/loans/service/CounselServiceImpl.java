@@ -2,13 +2,11 @@ package fintech.loans.service;
 
 import fintech.loans.domain.Counsel;
 import fintech.loans.dto.CounselRequestDto;
-import fintech.loans.exception.BasicException;
+import fintech.loans.exception.ApiException;
 import fintech.loans.repository.CounselRepository;
 import lombok.RequiredArgsConstructor;
-import org.apache.el.stream.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
 
 @Service
 @RequiredArgsConstructor
@@ -21,22 +19,22 @@ public class CounselServiceImpl implements CounselService{
     public Counsel save(CounselRequestDto counselRequestDto) {
 
         if(counselRequestDto.getName() == null || counselRequestDto.getName().isEmpty()){
-            throw new BasicException("name은 필수 입니다.","301000");
+            throw new NullPointerException("name은 필수 입니다.");
         }
 
         if(counselRequestDto.getPhone() == null || counselRequestDto.getPhone().isEmpty()){
-            throw new BasicException("phone은 필수 입니다.","302000");
+            throw new NullPointerException("phone은 필수 입니다.");
         }
 
-        Counsel counsel = new Counsel();
-        counsel.setName(counselRequestDto.getName());
-        counsel.setPhone(counselRequestDto.getPhone());
-        counsel.setEmail(counselRequestDto.getEmail());
-        counsel.setMemo(counselRequestDto.getMemo());
+        Counsel counsel = Counsel.builder()
+                        .name(counselRequestDto.getName())
+                        .phone(counselRequestDto.getPhone())
+                        .email(counselRequestDto.getEmail())
+                        .memo(counselRequestDto.getMemo())
+                        .build();
 
-        System.out.println("counsel.toString() = " + counsel.toString());
         Counsel saveCounsel = counselRepository.save(counsel);
-        System.out.println("saveCounsel.toString() = " + saveCounsel.toString());
+        
         return saveCounsel;
     }
 
