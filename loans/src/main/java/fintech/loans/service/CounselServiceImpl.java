@@ -2,7 +2,6 @@ package fintech.loans.service;
 
 import fintech.loans.domain.Counsel;
 import fintech.loans.dto.CounselRequestDto;
-import fintech.loans.exception.ApiException;
 import fintech.loans.repository.CounselRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -26,6 +25,10 @@ public class CounselServiceImpl implements CounselService{
             throw new NullPointerException("phone은 필수 입니다.");
         }
 
+        if(counselRequestDto.getMemo() == null || counselRequestDto.getMemo().isEmpty()){
+            throw new NullPointerException("memo는 필수 입니다.");
+        }
+
         Counsel counsel = Counsel.builder()
                         .name(counselRequestDto.getName())
                         .phone(counselRequestDto.getPhone())
@@ -33,9 +36,7 @@ public class CounselServiceImpl implements CounselService{
                         .memo(counselRequestDto.getMemo())
                         .build();
 
-        Counsel saveCounsel = counselRepository.save(counsel);
-
-        return saveCounsel;
+        return counselRepository.save(counsel);
     }
 
 }
