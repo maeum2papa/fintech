@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -61,5 +62,27 @@ public class CounselController {
                 .build();
     }
 
+    /**
+     * 상담완료 : counselDate 생성
+     */
+    @GetMapping("/counsel/{id}/update")
+    public ResponseDto<CounselResponseDto> successCounsel(@Valid @PathVariable("id") Long counselId){
 
+        Counsel findCounsel = counselService.findById(counselId);
+        findCounsel.setCounselDate(LocalDateTime.now());
+
+        CounselResponseDto counselResponseDto = CounselResponseDto
+                .builder()
+                .name(findCounsel.getName())
+                .phone(findCounsel.getPhone())
+                .email(findCounsel.getEmail())
+                .memo(findCounsel.getMemo())
+                .counselDate(findCounsel.getCounselDate())
+                .createDate(findCounsel.getCreateDate())
+                .build();
+
+        return ResponseDto.<CounselResponseDto>builder()
+                .data(counselResponseDto)
+                .build();
+    }
 }

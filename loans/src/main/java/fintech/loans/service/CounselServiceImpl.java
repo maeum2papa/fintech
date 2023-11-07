@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
@@ -28,11 +29,22 @@ public class CounselServiceImpl implements CounselService{
         return counselRepository.save(counsel);
     }
 
+
+
     @Override
     public Counsel findById(Long counselId){
         Optional<Counsel> findCounsel = counselRepository.findById(counselId);
         return findCounsel.orElse(null);
     }
 
+
+    @Override
+    public Counsel successCounsel(Long conselId){
+
+        Counsel findCounsel = findById(conselId);
+        findCounsel.setCounselDate(LocalDateTime.now());
+
+        return findCounsel;
+    }
 
 }
