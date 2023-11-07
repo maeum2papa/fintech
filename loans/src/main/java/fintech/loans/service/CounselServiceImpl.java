@@ -4,6 +4,7 @@ import fintech.loans.domain.Counsel;
 import fintech.loans.dto.CounselRequestDto;
 import fintech.loans.repository.CounselRepository;
 import lombok.RequiredArgsConstructor;
+import net.bytebuddy.asm.Advice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,12 +40,29 @@ public class CounselServiceImpl implements CounselService{
 
 
     @Override
-    public Counsel successCounsel(Long conselId){
+    public Counsel successCounsel(Long conselId, String adminMemo){
 
         Counsel findCounsel = findById(conselId);
         findCounsel.setCounselDate(LocalDateTime.now());
+        findCounsel.setAdminMemo(adminMemo);
 
         return findCounsel;
+    }
+
+    @Override
+    public Boolean cancelCounsel(Long conselId) {
+
+        boolean result = false;
+
+        Counsel findCounsel = findById(conselId);
+        findCounsel.setCancelDate(LocalDateTime.now());
+
+        Counsel checkCounsel = findById(conselId);
+        if(checkCounsel.getCancelDate() != null){
+            result = true;
+        }
+
+        return result;
     }
 
 }

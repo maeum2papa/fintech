@@ -30,7 +30,13 @@ public class Counsel extends Date{
     @Column(columnDefinition = "TEXT")
     private String memo = "";
 
+    @Column(columnDefinition = "TEXT")
+    private String adminMemo = "";
+
     @Column(columnDefinition = "DATETIME")
     private LocalDateTime counselDate;
+
+    @Column(columnDefinition = "DATETIME")
+    private LocalDateTime cancelDate;
 
 }

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.annotation.JsonValueInstantiator;
 import fintech.loans.domain.Counsel;
 import fintech.loans.dto.CounselRequestDto;
 import fintech.loans.dto.CounselResponseDto;
+import fintech.loans.dto.CounselSuccessRequestDto;
 import fintech.loans.dto.common.ResponseDto;
 import fintech.loans.service.CounselServiceImpl;
 import lombok.RequiredArgsConstructor;
@@ -25,11 +26,14 @@ public class CounselController {
      * 상담 요청 저장
      */
     @PostMapping("/counsel")
-    public ResponseDto<CounselResponseDto> counselSave(@Valid @RequestBody CounselRequestDto counselRequestDto){
+    public ResponseDto<CounselResponseDto> counselSave(
+            @Valid @RequestBody CounselRequestDto counselRequestDto
+    ){
 
         Counsel saveCounsel = counselService.save(counselRequestDto);
         CounselResponseDto counselResponseDto = CounselResponseDto
                 .builder()
+                .counselId(saveCounsel.getId())
                 .name(saveCounsel.getName())
                 .createDate(saveCounsel.getCreateDate())
                 .build();
@@ -43,12 +47,15 @@ public class CounselController {
     /**
      * 상담조회
      */
-    @GetMapping("/counsel/{id}")
-    public ResponseDto<CounselResponseDto> counselVeiw(@Valid @PathVariable("id") Long counselId){
+    @PostMapping("/counsel/{id}") //보안때문에 POST
+    public ResponseDto<CounselResponseDto> counselVeiw(
+            @Valid @PathVariable("id") Long counselId
+    ){
 
         Counsel findCounsel = counselService.findById(counselId);
         CounselResponseDto counselResponseDto = CounselResponseDto
                 .builder()
+                .counselId(findCounsel.getId())
                 .name(findCounsel.getName())
                 .phone(findCounsel.getPhone())
                 .email(findCounsel.getEmail())
@@ -65,11 +72,13 @@ public class CounselController {
     /**
      * 상담완료 : counselDate 생성
      */
-    @GetMapping("/counsel/{id}/update")
-    public ResponseDto<CounselResponseDto> successCounsel(@Valid @PathVariable("id") Long counselId){
+    @PutMapping("/counsel/{id}/update")
+    public ResponseDto<CounselResponseDto> successCounsel(
+            @Valid @PathVariable("id") Long counselId,
+            @Valid @RequestBody CounselSuccessRequestDto counselSuccessRequestDto
+    ){
 
-        Counsel findCounsel = counselService.findById(counselId);
-        findCounsel.setCounselDate(LocalDateTime.now());
+        Counsel findCounsel = counselService.successCounsel(counselId, counselSuccessRequestDto.getAdminMemo());
 
         CounselResponseDto counselResponseDto = CounselResponseDto
                 .builder()
@@ -77,12 +86,26 @@ public class CounselController {
                 .phone(findCounsel.getPhone())
                 .email(findCounsel.getEmail())
                 .memo(findCounsel.getMemo())
+                .adminMemo(findCounsel.getAdminMemo())
                 .counselDate(findCounsel.getCounselDate())
                 .createDate(findCounsel.getCreateDate())
                 .build();
 
         return ResponseDto.<CounselResponseDto>builder()
                 .data(counselResponseDto)
+                .build();
+    }
+
+    /**
+     * 상담취소
+     */
+    @PutMapping("/counsel/{id}/cancel")
+    public ResponseDto cancelCounsel(@PathVariable("id") Long counselId){
+
+        Boolean result = counselService.cancelCounsel(counselId);
+
+        return ResponseDto.builder()
+                .data(result)
                 .build();
     }
 }

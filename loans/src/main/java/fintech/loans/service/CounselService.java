@@ -12,9 +12,12 @@ public interface CounselService {
      */
     public Counsel save(CounselRequestDto counselRequestDto);
 
-    public Counsel successCounsel(Long conselId);
+    public Counsel successCounsel(Long conselId, String adminMemo);
+
+    public Boolean cancelCounsel(Long conselId);
 
     public Counsel findById(Long counselId);
+
 
 
 }

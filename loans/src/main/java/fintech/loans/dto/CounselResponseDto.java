@@ -12,10 +12,12 @@ import java.time.LocalDateTime;
 @Builder
 public class CounselResponseDto {
 
+    private Long counselId;
     private String name;
     private String phone;
     private String email;
     private String memo;
+    private String adminMemo;
     private LocalDateTime counselDate;
     private LocalDateTime createDate;
 
