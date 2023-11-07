@@ -1,5 +1,6 @@
 package fintech.loans.controller;
 
+import com.fasterxml.jackson.databind.annotation.JsonValueInstantiator;
 import fintech.loans.domain.Counsel;
 import fintech.loans.dto.CounselRequestDto;
 import fintech.loans.dto.CounselResponseDto;
@@ -23,7 +24,7 @@ public class CounselController {
      * 상담 요청 저장
      */
     @PostMapping("/counsel")
-    public ResponseDto<CounselResponseDto> counselSave(@RequestBody CounselRequestDto counselRequestDto){
+    public ResponseDto<CounselResponseDto> counselSave(@Valid @RequestBody CounselRequestDto counselRequestDto){
 
         Counsel saveCounsel = counselService.save(counselRequestDto);
         CounselResponseDto counselResponseDto = CounselResponseDto
