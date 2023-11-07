@@ -39,5 +39,27 @@ public class CounselController {
     }
 
 
+    /**
+     * 상담조회
+     */
+    @GetMapping("/counsel/{id}")
+    public ResponseDto<CounselResponseDto> counselVeiw(@Valid @PathVariable("id") Long counselId){
+
+        Counsel findCounsel = counselService.findById(counselId);
+        CounselResponseDto counselResponseDto = CounselResponseDto
+                .builder()
+                .name(findCounsel.getName())
+                .phone(findCounsel.getPhone())
+                .email(findCounsel.getEmail())
+                .memo(findCounsel.getMemo())
+                .counselDate(findCounsel.getCounselDate())
+                .createDate(findCounsel.getCreateDate())
+                .build();
+
+        return ResponseDto.<CounselResponseDto>builder()
+                .data(counselResponseDto)
+                .build();
+    }
+
 
 }

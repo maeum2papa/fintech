@@ -18,6 +18,5 @@ public class CounselResponseDto {
     private String memo;
     private LocalDateTime counselDate;
     private LocalDateTime createDate;
-    private LocalDateTime updateDate;
 
 }

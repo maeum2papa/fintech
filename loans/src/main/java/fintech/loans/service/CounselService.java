@@ -12,4 +12,6 @@ public interface CounselService {
      */
     public Counsel save(CounselRequestDto counselRequestDto);
 
+    public Counsel findById(Long counselId);
+
 }

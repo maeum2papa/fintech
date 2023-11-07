@@ -11,6 +11,8 @@ import java.time.LocalDateTime;
 @Entity
 @Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Counsel extends Date{
 
     @Id
