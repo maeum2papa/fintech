@@ -1,10 +1,13 @@
 package fintech.loans.exception;
 
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import fintech.loans.dto.common.ResponseDto;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.criterion.NotNullExpression;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -16,17 +19,16 @@ import java.util.stream.Collectors;
 @RestControllerAdvice
 public class ApiException{
 
-    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ExceptionHandler({MethodArgumentNotValidException.class})
     protected ResponseEntity<ResponseDto> ApiException(
             MethodArgumentNotValidException e
     ) {
-
         log.error("{}",e.toString());
 
         List<String> errors = e.getFieldErrors()
                 .stream()
                 .map(i -> {
-                    return String.format("%s : %s은 %s", i.getField(), i.getRejectedValue(), i.getDefaultMessage());
+                    return String.format("%s : %s 은 %s", i.getField(), i.getRejectedValue(), i.getDefaultMessage());
                 })
                 .collect(Collectors.toList());
 
@@ -40,6 +42,30 @@ public class ApiException{
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(build);
+    }
+
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    protected ResponseEntity<ResponseDto> ApiException(
+            HttpMessageNotReadableException e
+    ){
+
+        String message = "JSON 형식이 잘못되었습니다.";
+
+        log.error(message);
+
+
+        ResponseDto<Object> build = ResponseDto
+                .builder()
+                .statusCode(String.valueOf(HttpStatus.BAD_REQUEST.value()))
+                .message(message)
+                .errors(List.of(message))
+                .build();
+
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(build);
+
     }
 
 
