@@ -1,15 +1,21 @@
 package fintech.loans.service;
 
+import fintech.loans.domain.Checker;
+import fintech.loans.dto.CheckSaveRequestDto;
+
 public interface CheckService {
 
 
-    public void save();
+    //대출신청
+    public Checker saveCheckLoan(CheckSaveRequestDto checkSaveRequestDto);
 
-    /*
-    - 대출신청
-- 대출심사
-- 대출심사결과조회(제안)
-- 대출계약
-     */
+    //대출심사
+    public Checker checkLoan();
+
+    //대출심사결과조회(제안)
+    public Checker viewCheckLoan();
+
+    //대출계약
+    public Checker contractLoan();
 
 }

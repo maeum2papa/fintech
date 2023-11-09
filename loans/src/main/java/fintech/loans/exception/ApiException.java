@@ -23,7 +23,7 @@ public class ApiException{
     protected ResponseEntity<ResponseDto> ApiException(
             MethodArgumentNotValidException e
     ) {
-        log.error("{}",e.toString());
+        log.error("",e);
 
         List<String> errors = e.getFieldErrors()
                 .stream()
@@ -74,7 +74,7 @@ public class ApiException{
             NullPointerException e
     ) {
 
-        log.error("{}",e.toString());
+        log.error("",e);
 
 
         ResponseDto<Object> build = ResponseDto

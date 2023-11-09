@@ -22,7 +22,7 @@ public class Checker extends Date {
     @Id
     @GeneratedValue( strategy = GenerationType.IDENTITY)
     @Column(name = "checkId")
-    private Long Id;
+    private Long id;
 
     private String name;
 
@@ -82,15 +82,18 @@ public class Checker extends Date {
     //Date.createDate
 
     //심사일
+    @Column(columnDefinition = "DATETIME")
     private LocalDateTime examinationDate;
 
     //상태
     private StatusEnum status;
 
     //계약일
+    @Column(columnDefinition = "DATETIME")
     private LocalDateTime contractDate;
 
     //계약종료일
+    @Column(columnDefinition = "DATETIME")
     private LocalDateTime contractEndDate;
 
 
