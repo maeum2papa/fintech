@@ -10,7 +10,7 @@ public interface CheckService {
     public Checker saveCheckLoan(CheckSaveRequestDto checkSaveRequestDto);
 
     //대출심사
-    public Checker checkLoan();
+    public Checker checkLoan(Long id);
 
     //대출심사결과조회(제안)
     public Checker viewCheckLoan();

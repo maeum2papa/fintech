@@ -35,4 +35,21 @@ public class CheckController {
     }
 
 
+    //대출심사
+    @PutMapping("/{id}")
+    public ResponseDto<CheckResponseDto> checkLoan(@Valid @PathVariable("id") Long id){
+
+        Checker checker = checkService.checkLoan(id);
+
+        CheckResponseDto build = CheckResponseDto.builder()
+                .id(checker.getId())
+                .createDate(checker.getCreateDate())
+                .build();
+
+        return ResponseDto.<CheckResponseDto>builder()
+                .data(build)
+                .build();
+    }
+
+
 }
