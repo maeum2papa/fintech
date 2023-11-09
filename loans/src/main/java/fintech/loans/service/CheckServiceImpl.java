@@ -7,6 +7,7 @@ import fintech.loans.dto.eum.LoanKindEnum;
 import fintech.loans.dto.eum.StatusEnum;
 import fintech.loans.repository.CheckRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,6 +17,7 @@ import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -54,7 +56,7 @@ public class CheckServiceImpl implements CheckService{
         Optional<Checker> findChecker = checkRepository.findById(id);
         Checker checker = findChecker.orElse(null);
 
-        if(checker != null){
+        if(checker != null && checker.getStatus() == StatusEnum.CHECK){
 
             double basicInterestRate = 3.82;
 
@@ -99,9 +101,11 @@ public class CheckServiceImpl implements CheckService{
             BigDecimal DSR = BigDecimal.valueOf(checker.getOtherYearPrincipalAndInterrest() + (checker.getMonthlyRepaymentOfPrincipalAndInterest() * 12))
                     .divide(
                             BigDecimal.valueOf(checker.getIncome())
-                            , 2
+                            , 3
                             , RoundingMode.UP
                     );
+
+            log.info("DSR = {}",DSR.doubleValue());
 
             boolean pass = DSR.doubleValue() <= checker.getDSR();
 
@@ -109,12 +113,15 @@ public class CheckServiceImpl implements CheckService{
             //주담대일 경우 LTV 체크
             if(checker.getLoanKind() == LoanKindEnum.HOUSE && pass){
 
-                //LTV : (담보가치/대출금액) < LTV = true;
-                BigDecimal LTV = BigDecimal.valueOf(checker.getAsset())
+                //LTV : (대출금액/담보가치) < LTV = true;
+                BigDecimal LTV = BigDecimal.valueOf(checker.getAmount())
                         .divide(
-                                BigDecimal.valueOf(checker.getAmount()),
+                                BigDecimal.valueOf(checker.getAsset()),
+                                3,
                                 RoundingMode.UP
                         );
+
+                log.info("LTV = {}",LTV.doubleValue());
 
                 if(LTV.doubleValue() > checker.getLTV() ){
                     pass = false;

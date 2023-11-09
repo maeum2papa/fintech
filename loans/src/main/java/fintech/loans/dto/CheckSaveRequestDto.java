@@ -5,14 +5,19 @@ import fintech.loans.dto.eum.LoanKindEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.annotation.PostConstruct;
 import javax.persistence.PrePersist;
+import javax.validation.Valid;
 import javax.validation.constraints.AssertTrue;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
+@Slf4j
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -43,6 +48,7 @@ public class CheckSaveRequestDto {
     //(대출금액/담보가치) < LTV = true;
     private Double LTV;
 
+    @NotNull
     //(연소득/(타대출연원리금 + (월상환원리금 *12)))) < DSR = true;
     private Double DSR;
 
@@ -72,10 +78,6 @@ public class CheckSaveRequestDto {
         if(this.loanKind == LoanKindEnum.HOUSE){
             if(this.LTV == null){
                 this.LTV = 0d;
-            }
-
-            if(this.DSR == null){
-                this.DSR = 0d;
             }
         }
     }
