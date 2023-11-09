@@ -144,8 +144,12 @@ public class CheckServiceImpl implements CheckService{
     }
 
     @Override
-    public Checker viewCheckLoan() {
-        return null;
+    public Checker viewCheckLoan(Long id) {
+
+        Optional<Checker> findChecker = checkRepository.findById(id);
+        Checker checker = findChecker.orElse(null);
+
+        return checker;
     }
 
     @Override

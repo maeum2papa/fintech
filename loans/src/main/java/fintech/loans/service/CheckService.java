@@ -13,7 +13,7 @@ public interface CheckService {
     public Checker checkLoan(Long id);
 
     //대출심사결과조회(제안)
-    public Checker viewCheckLoan();
+    public Checker viewCheckLoan(Long id);
 
     //대출계약
     public Checker contractLoan();

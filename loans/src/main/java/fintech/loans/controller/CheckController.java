@@ -82,5 +82,43 @@ public class CheckController {
                 .build();
     }
 
+    //대출심사결과 조회
+    @PostMapping("/{id}")
+    public ResponseDto<CheckResponseDto> checkLoanResult(@Valid @PathVariable("id") Long id) {
+
+        Checker checker = checkService.viewCheckLoan(id);
+
+        CheckResponseDto build = CheckResponseDto.builder()
+                .id(checker.getId())
+                .name(checker.getName())
+                .phone(checker.getPhone())
+                .email(checker.getEmail())
+                .address(checker.getAddress())
+                .addressDetail(checker.getAddressDetail())
+                .loanKind(checker.getLoanKind())
+                .otherYearPrincipalAndInterrest(checker.getOtherYearPrincipalAndInterrest())
+                .LTV(checker.getLTV())
+                .DSR(checker.getDSR())
+                .income(checker.getIncome())
+                .asset(checker.getAsset())
+                .amount(checker.getAmount())
+                .loanRepaymentPeriod(checker.getLoanRepaymentPeriod())
+                .interestRateKind(checker.getInterestRateKind())
+                .interestRate(checker.getInterestRate())
+                .monthlyRepaymentOfPrincipalAndInterest(checker.getMonthlyRepaymentAmount())
+                .monthlyRepaymentAmount(checker.getMonthlyRepaymentAmount())
+                .monthlyRepaymentInterest(checker.getMonthlyRepaymentInterest())
+                .totalLoanInterest(checker.getTotalLoanInterest())
+                .createDate(checker.getCreateDate())
+                .examinationDate(checker.getExaminationDate())
+                .status(checker.getStatus())
+                .contractDate(checker.getContractDate())
+                .contractEndDate(checker.getContractEndDate())
+                .build();
+
+        return ResponseDto.<CheckResponseDto>builder()
+                .data(build)
+                .build();
+    }
 
 }
