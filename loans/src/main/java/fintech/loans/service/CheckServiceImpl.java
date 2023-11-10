@@ -147,14 +147,23 @@ public class CheckServiceImpl implements CheckService{
     public Checker viewCheckLoan(Long id) {
 
         Optional<Checker> findChecker = checkRepository.findById(id);
-        Checker checker = findChecker.orElse(null);
 
-        return checker;
+        return findChecker.orElse(null);
     }
 
     @Override
-    public Checker contractLoan() {
-        return null;
+    public Checker contractLoan(Long id) {
+
+        Optional<Checker> findChecker = checkRepository.findById(id);
+        Checker checker = findChecker.orElse(null);
+
+        if(checker != null && checker.getStatus() == StatusEnum.APPROVED){
+            checker.setContractDate(LocalDateTime.now());
+        }else{
+            throw new RuntimeException("대출 심사 승인이 필요합니다.");
+        }
+
+        return checker;
     }
 
 }

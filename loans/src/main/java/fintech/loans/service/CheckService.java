@@ -16,6 +16,6 @@ public interface CheckService {
     public Checker viewCheckLoan(Long id);
 
     //대출계약
-    public Checker contractLoan();
+    public Checker contractLoan(Long id);
 
 }

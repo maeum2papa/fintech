@@ -89,4 +89,23 @@ public class ApiException{
                 .body(build);
     }
 
+
+    @ExceptionHandler(RuntimeException.class)
+    protected ResponseEntity<ResponseDto> ApiException(
+            RuntimeException e
+    ) {
+
+        log.error("",e);
+
+        ResponseDto<Object> build = ResponseDto
+                .builder()
+                .statusCode(String.valueOf(HttpStatus.BAD_REQUEST.value()))
+                .message(e.getMessage())
+                .errors(List.of(e.getMessage()))
+                .build();
+
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(build);
+    }
 }

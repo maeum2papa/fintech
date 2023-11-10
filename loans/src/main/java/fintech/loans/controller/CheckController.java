@@ -4,17 +4,13 @@ import fintech.loans.domain.Checker;
 import fintech.loans.dto.CheckResponseDto;
 import fintech.loans.dto.CheckSaveRequestDto;
 import fintech.loans.dto.common.ResponseDto;
-import fintech.loans.dto.eum.InterestRateEnum;
-import fintech.loans.dto.eum.LoanKindEnum;
-import fintech.loans.dto.eum.StatusEnum;
+import fintech.loans.service.CheckService;
 import fintech.loans.service.CheckServiceImpl;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.time.LocalDateTime;
 
 @Slf4j
 @RestController
@@ -51,30 +47,8 @@ public class CheckController {
 
         CheckResponseDto build = CheckResponseDto.builder()
                 .id(checker.getId())
-                .name(checker.getName())
-                .phone(checker.getPhone())
-                .email(checker.getEmail())
-                .address(checker.getAddress())
-                .addressDetail(checker.getAddressDetail())
-                .loanKind(checker.getLoanKind())
-                .otherYearPrincipalAndInterrest(checker.getOtherYearPrincipalAndInterrest())
-                .LTV(checker.getLTV())
-                .DSR(checker.getDSR())
-                .income(checker.getIncome())
-                .asset(checker.getAsset())
-                .amount(checker.getAmount())
-                .loanRepaymentPeriod(checker.getLoanRepaymentPeriod())
-                .interestRateKind(checker.getInterestRateKind())
-                .interestRate(checker.getInterestRate())
-                .monthlyRepaymentOfPrincipalAndInterest(checker.getMonthlyRepaymentAmount())
-                .monthlyRepaymentAmount(checker.getMonthlyRepaymentAmount())
-                .monthlyRepaymentInterest(checker.getMonthlyRepaymentInterest())
-                .totalLoanInterest(checker.getTotalLoanInterest())
-                .createDate(checker.getCreateDate())
                 .examinationDate(checker.getExaminationDate())
                 .status(checker.getStatus())
-                .contractDate(checker.getContractDate())
-                .contractEndDate(checker.getContractEndDate())
                 .build();
 
         return ResponseDto.<CheckResponseDto>builder()
@@ -114,6 +88,21 @@ public class CheckController {
                 .status(checker.getStatus())
                 .contractDate(checker.getContractDate())
                 .contractEndDate(checker.getContractEndDate())
+                .build();
+
+        return ResponseDto.<CheckResponseDto>builder()
+                .data(build)
+                .build();
+    }
+
+    @PutMapping("/{id}/contract")
+    public ResponseDto<CheckResponseDto> contractLoan(@PathVariable("id") Long id){
+
+        Checker contractChecker = checkService.contractLoan(id);
+
+        CheckResponseDto build = CheckResponseDto.builder()
+                .id(contractChecker.getId())
+                .contractDate(contractChecker.getContractDate())
                 .build();
 
         return ResponseDto.<CheckResponseDto>builder()
