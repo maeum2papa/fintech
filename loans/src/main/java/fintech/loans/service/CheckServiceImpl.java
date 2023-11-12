@@ -6,6 +6,7 @@ import fintech.loans.dto.eum.InterestRateEnum;
 import fintech.loans.dto.eum.LoanKindEnum;
 import fintech.loans.dto.eum.StatusEnum;
 import fintech.loans.repository.CheckRepository;
+import fintech.loans.repository.RepayRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -24,6 +25,7 @@ import java.util.Optional;
 public class CheckServiceImpl implements CheckService{
 
     private final CheckRepository checkRepository;
+    private final RepayService repayService;
 
     @Override
     public Checker saveCheckLoan(CheckSaveRequestDto checkSaveRequestDto) {
@@ -159,6 +161,7 @@ public class CheckServiceImpl implements CheckService{
 
         if(checker != null && checker.getStatus() == StatusEnum.APPROVED){
             checker.setContractDate(LocalDateTime.now());
+            repayService.createRepaySchedule(checker);
         }else{
             throw new RuntimeException("대출 심사 승인이 필요합니다.");
         }

@@ -79,7 +79,7 @@ public class CheckController {
                 .loanRepaymentPeriod(checker.getLoanRepaymentPeriod())
                 .interestRateKind(checker.getInterestRateKind())
                 .interestRate(checker.getInterestRate())
-                .monthlyRepaymentOfPrincipalAndInterest(checker.getMonthlyRepaymentAmount())
+                .monthlyRepaymentOfPrincipalAndInterest(checker.getMonthlyRepaymentAmount() + checker.getMonthlyRepaymentInterest())
                 .monthlyRepaymentAmount(checker.getMonthlyRepaymentAmount())
                 .monthlyRepaymentInterest(checker.getMonthlyRepaymentInterest())
                 .totalLoanInterest(checker.getTotalLoanInterest())

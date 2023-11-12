@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Data
@@ -96,5 +97,6 @@ public class Checker extends Date {
     @Column(columnDefinition = "DATETIME")
     private LocalDateTime contractEndDate;
 
-
+    @OneToMany(mappedBy = "checker")
+    private List<Repay> repays = List.of();
 }
