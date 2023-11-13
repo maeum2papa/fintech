@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -22,7 +23,11 @@ public class RepayServiceImpl implements RepayService{
     private final CheckRepository checkRepository;
 
     @Override
-    public void createRepaySchedule(Checker checker) {
+    public void createRepaySchedule(Long checkerId) {
+
+        Optional<Checker> findChecker = checkRepository.findById(checkerId);
+
+        Checker checker = findChecker.orElse(null);
 
         if(checker != null){
 
@@ -45,6 +50,11 @@ public class RepayServiceImpl implements RepayService{
             throw new RuntimeException("상환 스케줄 생성 오류가 발생하였습니다.");
         }
 
+    }
+
+    @Override
+    public List<Repay> getRepays(Long checkId){
+        return repayRepository.findAllByCheckerIdOrderByIdAsc(checkId);
     }
 
 }

@@ -1,13 +1,11 @@
 package fintech.loans.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import fintech.loans.domain.common.Date;
 import fintech.loans.dto.eum.InterestRateEnum;
 import fintech.loans.dto.eum.LoanKindEnum;
 import fintech.loans.dto.eum.StatusEnum;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -97,6 +95,8 @@ public class Checker extends Date {
     @Column(columnDefinition = "DATETIME")
     private LocalDateTime contractEndDate;
 
-    @OneToMany(mappedBy = "checker")
+    @OneToMany(mappedBy = "checker", fetch = FetchType.LAZY)
+    @JsonIgnore
+    @ToString.Exclude
     private List<Repay> repays = List.of();
 }

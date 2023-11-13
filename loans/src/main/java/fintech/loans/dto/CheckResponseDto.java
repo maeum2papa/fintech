@@ -1,6 +1,7 @@
 package fintech.loans.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import fintech.loans.domain.Repay;
 import fintech.loans.dto.eum.InterestRateEnum;
 import fintech.loans.dto.eum.LoanKindEnum;
 import fintech.loans.dto.eum.StatusEnum;
@@ -11,6 +12,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.Column;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static com.fasterxml.jackson.annotation.JsonInclude.*;
 
@@ -90,4 +92,6 @@ public class CheckResponseDto {
     private LocalDateTime contractEndDate;
 
     private LocalDateTime createDate;
+
+    private List<Repay> repay;
 }

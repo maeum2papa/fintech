@@ -1,16 +1,19 @@
 package fintech.loans.controller;
 
 import fintech.loans.domain.Checker;
+import fintech.loans.domain.Repay;
 import fintech.loans.dto.CheckResponseDto;
 import fintech.loans.dto.CheckSaveRequestDto;
 import fintech.loans.dto.common.ResponseDto;
 import fintech.loans.service.CheckService;
 import fintech.loans.service.CheckServiceImpl;
+import fintech.loans.service.RepayService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -19,6 +22,7 @@ import javax.validation.Valid;
 public class CheckController {
 
     private final CheckServiceImpl checkService;
+    private final RepayService repayService;
 
     //대출심사신청
     @PostMapping()
@@ -61,6 +65,9 @@ public class CheckController {
     public ResponseDto<CheckResponseDto> checkLoanResult(@Valid @PathVariable("id") Long id) {
 
         Checker checker = checkService.viewCheckLoan(id);
+        List<Repay> repays = repayService.getRepays(checker.getId());
+
+        log.info("checker = {}",checker);
 
         CheckResponseDto build = CheckResponseDto.builder()
                 .id(checker.getId())
@@ -79,15 +86,16 @@ public class CheckController {
                 .loanRepaymentPeriod(checker.getLoanRepaymentPeriod())
                 .interestRateKind(checker.getInterestRateKind())
                 .interestRate(checker.getInterestRate())
-                .monthlyRepaymentOfPrincipalAndInterest(checker.getMonthlyRepaymentAmount() + checker.getMonthlyRepaymentInterest())
                 .monthlyRepaymentAmount(checker.getMonthlyRepaymentAmount())
                 .monthlyRepaymentInterest(checker.getMonthlyRepaymentInterest())
+                .monthlyRepaymentOfPrincipalAndInterest(checker.getMonthlyRepaymentOfPrincipalAndInterest())
                 .totalLoanInterest(checker.getTotalLoanInterest())
                 .createDate(checker.getCreateDate())
                 .examinationDate(checker.getExaminationDate())
                 .status(checker.getStatus())
                 .contractDate(checker.getContractDate())
                 .contractEndDate(checker.getContractEndDate())
+                .repay(repays)
                 .build();
 
         return ResponseDto.<CheckResponseDto>builder()
@@ -104,6 +112,8 @@ public class CheckController {
                 .id(contractChecker.getId())
                 .contractDate(contractChecker.getContractDate())
                 .build();
+
+        repayService.createRepaySchedule(contractChecker.getId());
 
         return ResponseDto.<CheckResponseDto>builder()
                 .data(build)

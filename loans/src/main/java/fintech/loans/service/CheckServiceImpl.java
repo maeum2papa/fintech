@@ -26,6 +26,7 @@ public class CheckServiceImpl implements CheckService{
 
     private final CheckRepository checkRepository;
     private final RepayService repayService;
+    private final RepayRepository repayRepository;
 
     @Override
     public Checker saveCheckLoan(CheckSaveRequestDto checkSaveRequestDto) {
@@ -161,7 +162,6 @@ public class CheckServiceImpl implements CheckService{
 
         if(checker != null && checker.getStatus() == StatusEnum.APPROVED){
             checker.setContractDate(LocalDateTime.now());
-            repayService.createRepaySchedule(checker);
         }else{
             throw new RuntimeException("대출 심사 승인이 필요합니다.");
         }
