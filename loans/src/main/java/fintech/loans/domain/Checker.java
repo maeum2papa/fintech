@@ -98,5 +98,5 @@ public class Checker extends Date {
     @OneToMany(mappedBy = "checker", fetch = FetchType.LAZY)
     @JsonIgnore
     @ToString.Exclude
-    private List<Repay> repays = List.of();
+    private List<Repay> repays;
 }
