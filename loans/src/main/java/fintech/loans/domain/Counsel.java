@@ -12,6 +12,7 @@ import java.util.List;
 
 @Entity
 @Data
+@EqualsAndHashCode(callSuper = true)
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -27,13 +28,13 @@ public class Counsel extends Date{
     @Column(columnDefinition = "VARCHAR(20)")
     private String phone;
 
-    private String email = "";
+    private String email;
 
     @Column(columnDefinition = "TEXT")
-    private String memo = "";
+    private String memo;
 
     @Column(columnDefinition = "TEXT")
-    private String adminMemo = "";
+    private String adminMemo;
 
     @Column(columnDefinition = "DATETIME")
     private LocalDateTime counselDate;

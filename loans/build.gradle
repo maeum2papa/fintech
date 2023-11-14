@@ -35,3 +35,24 @@ dependencies {
 tasks.named('test') {
 	useJUnitPlatform()
 }
+
+tasks.withType(Jar) {
+	duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+
+
+/*
+docker build --platform linux/amd64 -t maeum2papa/loans .
+
+network : dockernetwork
+
+MYSQL_DATABASE=mydb",
+"MYSQL_ROOT_PASSWORD=root1234!!",
+"TZ=Asia/Seoul",
+
+docker run --name mysql-container -p 3306:3306 --network dockernetwork -e MYSQL_DATABASE=mydb -e MYSQL_ROOT_PASSWORD=root1234\!\! -e TZ=Asia/Seoul -d mysql
+
+docker run -p 8080:8080 --name loans --network dockernetwork -d maeum2papa/loans
+
+
+ */
