@@ -5,6 +5,7 @@ import fintech.loans.domain.Repay;
 import fintech.loans.dto.CheckResponseDto;
 import fintech.loans.dto.CheckSaveRequestDto;
 import fintech.loans.dto.common.ResponseDto;
+import fintech.loans.dto.eum.StatusEnum;
 import fintech.loans.service.CheckService;
 import fintech.loans.service.CheckServiceImpl;
 import fintech.loans.service.RepayService;
@@ -13,7 +14,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 
 @Slf4j
 @RestController
@@ -104,18 +108,40 @@ public class CheckController {
     @PutMapping("/{id}/contract")
     public ResponseDto<CheckResponseDto> contractLoan(@PathVariable("id") Long id){
 
+        Checker findChecker = checkService.viewCheckLoan(id);
+
+        log.info("findChecker = {}",findChecker);
+
+        if(findChecker == null){
+            throw new RuntimeException("대출 신청 데이터가 없습니다.");
+        }
+
+
+        //계약
         Checker contractChecker = checkService.contractLoan(id);
 
-        CheckResponseDto build = CheckResponseDto.builder()
-                .id(contractChecker.getId())
-                .contractDate(contractChecker.getContractDate())
-                .build();
+        if(
+            !(findChecker.getStatus() == StatusEnum.APPROVED &&
+            Objects.equals(findChecker.getContractDate().toLocalDate(), LocalDate.now()))
+        ){
+            throw new RuntimeException("대출 계약중 문제가 발생했습니다.");
+        }
 
-        repayService.createRepaySchedule(contractChecker.getId());
+        //총이자계산 및 회차별 상환 테이블
+        Checker checker = checkService.equalRepaymentOfPrincipalAndInterest(contractChecker);
+
+        //상환 스케줄 생성
+        repayService.createRepaySchedule(checker);
+
+        CheckResponseDto build = CheckResponseDto.builder()
+                .id(checker.getId())
+                .contractDate(checker.getContractDate())
+                .build();
 
         return ResponseDto.<CheckResponseDto>builder()
                 .data(build)
                 .build();
+
     }
 
 }

@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface RepayService {
 
-    public void createRepaySchedule(Long id);
+    public void createRepaySchedule(Checker checker);
 
     public List<Repay> getRepays(Long checkId);
 

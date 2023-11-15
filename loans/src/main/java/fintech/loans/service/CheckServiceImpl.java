@@ -206,6 +206,7 @@ public class CheckServiceImpl implements CheckService{
         }
 
         checker.setTotalLoanInterest(totalLoanInterest);
+        checker.setRepays(repaymentList);
 
         return checker;
     }

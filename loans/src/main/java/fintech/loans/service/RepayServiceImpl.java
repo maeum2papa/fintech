@@ -24,11 +24,7 @@ public class RepayServiceImpl implements RepayService{
     private final CheckRepository checkRepository;
 
     @Override
-    public void createRepaySchedule(Long checkerId) {
-
-        Optional<Checker> findChecker = checkRepository.findById(checkerId);
-
-        Checker checker = findChecker.orElse(null);
+    public void createRepaySchedule(Checker checker) {
 
         if(checker != null){
 
@@ -37,10 +33,15 @@ public class RepayServiceImpl implements RepayService{
 
             for (int i = 1; i < loanRepaymentPeriod+1; i++) {
 
+                Repay monthRepay = checker.getRepays().get((i - 1));
+
                 Repay repay = Repay.builder()
                         .round(i)
                         .checker(checker)
                         .repaymentDate(repaymentDate.plusMonths(i))
+                        .monthlyRepaymentAmount(monthRepay.getMonthlyRepaymentAmount())
+                        .monthlyRepaymentInterest(monthRepay.getMonthlyRepaymentInterest())
+                        .monthlyRepaymentOfPrincipalAndInterest(monthRepay.getMonthlyRepaymentOfPrincipalAndInterest())
                         .build();
 
                 repayRepository.save(repay);
