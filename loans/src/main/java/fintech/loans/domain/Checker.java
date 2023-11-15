@@ -68,12 +68,6 @@ public class Checker extends Date {
     //월상환원리금
     private Long monthlyRepaymentOfPrincipalAndInterest;
 
-    //월상환원금
-    private Long monthlyRepaymentAmount;
-
-    //월상환이자
-    private Long monthlyRepaymentInterest;
-
     //총대출이자
     private Long totalLoanInterest;
 

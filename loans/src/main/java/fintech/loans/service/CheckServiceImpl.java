@@ -1,6 +1,7 @@
 package fintech.loans.service;
 
 import fintech.loans.domain.Checker;
+import fintech.loans.domain.Repay;
 import fintech.loans.dto.CheckSaveRequestDto;
 import fintech.loans.dto.eum.InterestRateEnum;
 import fintech.loans.dto.eum.LoanKindEnum;
@@ -14,8 +15,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.Column;
 import java.math.BigDecimal;
+import java.math.MathContext;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Optional;
 
 @Slf4j
@@ -59,6 +62,7 @@ public class CheckServiceImpl implements CheckService{
         Optional<Checker> findChecker = checkRepository.findById(id);
         Checker checker = findChecker.orElse(null);
 
+
         if(checker != null && checker.getStatus() == StatusEnum.CHECK){
 
             double basicInterestRate = 3.82;
@@ -70,38 +74,17 @@ public class CheckServiceImpl implements CheckService{
 
             checker.setInterestRate(basicInterestRate);
 
+            //원리금균등상환 계산
+            checker = equalRepaymentOfPrincipalAndInterest(checker);
 
-            //월 상환 원금 구하기 = 대출희망금액 / 대출상환기간(개월)
-            BigDecimal monthlyRepaymentAmount = BigDecimal.valueOf(checker.getAmount())
-                    .divide(
-                            BigDecimal.valueOf(checker.getLoanRepaymentPeriod()),
-                            RoundingMode.UP
-                    );
-            checker.setMonthlyRepaymentAmount(monthlyRepaymentAmount.longValue());
+            //월평균원리금 (상환 원금 + 이자)
+            Long averageMonthTotalRepay = (checker.getAmount() + checker.getTotalLoanInterest()) / checker.getLoanRepaymentPeriod();
 
+            //연평균원리금 (월 평균 상환금액계산 * 12)
+            Long averageYearTotalRepay = averageMonthTotalRepay * 12;
 
-            //월 상환 이자 구하기 = 월 상환원금 * (금리 / 100)
-            BigDecimal monthlyRepaymentInterest = BigDecimal.valueOf(checker.getMonthlyRepaymentAmount())
-                    .multiply(BigDecimal.valueOf(basicInterestRate / 100));
-
-            checker.setMonthlyRepaymentInterest(
-                    monthlyRepaymentInterest.setScale(0,RoundingMode.UP)
-                                            .longValue()
-            );
-
-
-            //월 상환 원리금 = 월 상환원금 + 월 상환이자
-            checker.setMonthlyRepaymentOfPrincipalAndInterest(
-                    checker.getMonthlyRepaymentAmount() + checker.getMonthlyRepaymentInterest()
-            );
-
-
-            //총 대출 이자금  = 월 상환이자 * 대출상환기간(개월)
-            checker.setTotalLoanInterest(checker.getMonthlyRepaymentInterest() * checker.getLoanRepaymentPeriod());
-
-
-            //(타대출연원리금 + (월상환원리금 *12))/연소득 < DSR = true;
-            BigDecimal DSR = BigDecimal.valueOf(checker.getOtherYearPrincipalAndInterrest() + (checker.getMonthlyRepaymentOfPrincipalAndInterest() * 12))
+            //(타대출연원리금 + 연평균원리금)/연소득 < DSR = true;
+            BigDecimal DSR = BigDecimal.valueOf(checker.getOtherYearPrincipalAndInterrest() + averageYearTotalRepay)
                     .divide(
                             BigDecimal.valueOf(checker.getIncome())
                             , 3
@@ -165,6 +148,64 @@ public class CheckServiceImpl implements CheckService{
         }else{
             throw new RuntimeException("대출 심사 승인이 필요합니다.");
         }
+
+        return checker;
+    }
+
+    /**
+     * 원리금균등상환 계산기
+     * @param checker
+     * @return
+     */
+    public Checker equalRepaymentOfPrincipalAndInterest(Checker checker){
+
+        //원리금균등상환
+        Long repayment = checker.getAmount();
+        Long balanceAmount = 0L;
+        Long totalLoanInterest = 0L;
+        ArrayList<Repay> repaymentList = new ArrayList<>();
+
+        //월 이자율 = (0.38 / 100)/12
+        BigDecimal monthInterest = BigDecimal.valueOf(checker.getInterestRate())
+                .divide(BigDecimal.valueOf(100),20, RoundingMode.HALF_UP)
+                .divide(BigDecimal.valueOf(12),20,RoundingMode.HALF_UP);
+
+        for (int i = 1; i < checker.getLoanRepaymentPeriod()+1; i++) {
+
+            // 월이자계산기 = 잔금 * 월 이자율
+            BigDecimal interest = BigDecimal.valueOf(repayment)
+                    .multiply(monthInterest);
+
+            //월상환계산기
+            BigDecimal basicInterest = BigDecimal.valueOf(checker.getAmount()).multiply(monthInterest);
+
+            BigDecimal add = BigDecimal.valueOf(1).add(monthInterest);
+            BigDecimal pow = add.pow(-checker.getLoanRepaymentPeriod(), MathContext.DECIMAL128);
+            BigDecimal subtract = BigDecimal.valueOf(1).subtract(pow);
+
+            BigDecimal amount = basicInterest.divide(subtract, 0, RoundingMode.HALF_UP);
+
+            Long  repaymentAmount = amount.longValue() - interest.longValue();
+
+            balanceAmount = balanceAmount + amount.longValue();
+            repayment = repayment - repaymentAmount;
+
+            Repay repay = Repay.builder()
+                    .round(i)
+                    .monthlyRepaymentInterest(interest.longValue())
+                    .monthlyRepaymentAmount(repaymentAmount)
+                    .monthlyRepaymentOfPrincipalAndInterest(amount.longValue())
+                    .totalRepaymentAmount(repayment)
+                    .balanceAmount(balanceAmount)
+                    .build();
+
+            repaymentList.add(repay);
+
+            totalLoanInterest = totalLoanInterest + interest.longValue();
+
+        }
+
+        checker.setTotalLoanInterest(totalLoanInterest);
 
         return checker;
     }

@@ -41,7 +41,6 @@ public class RepayServiceImpl implements RepayService{
                         .round(i)
                         .checker(checker)
                         .repaymentDate(repaymentDate.plusMonths(i))
-                        .monthlyRepaymentAmount(checker.getMonthlyRepaymentAmount())
                         .build();
 
                 repayRepository.save(repay);

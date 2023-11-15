@@ -70,6 +70,7 @@ class CheckServiceImplTest {
             //원리금균등상환
             Long repayment = checker.getAmount();
             Long balanceAmount = 0L;
+            Long totalLoanInterest = 0L;
             ArrayList<Repay> repaymentList = new ArrayList<>();
 
             //월 이자율 = (0.38 / 100)/12
@@ -108,13 +109,11 @@ class CheckServiceImplTest {
 
                 repaymentList.add(repay);
 
-
-                System.out.println("repaymentList = " + repaymentList);
-
-                break;
-
+                totalLoanInterest = totalLoanInterest + interest.longValue();
 
             }
+
+            System.out.println("totalLoanInterest = " + totalLoanInterest);
 
 
         }
