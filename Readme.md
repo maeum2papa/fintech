@@ -163,7 +163,7 @@ http://43.201.224.74:8080
 {
     "statusCode": "200",
     "message": "OK",
-    "timeStamp": "2023-11-11T02:43:38.091914",
+    "timeStamp": "2023-11-15T14:03:21.695575",
     "data": {
         "id": 1,
         "name": "홍길동",
@@ -179,13 +179,11 @@ http://43.201.224.74:8080
         "loanRepaymentPeriod": 360,
         "interestRateKind": "FIXED",
         "interestRate": 4.0,
-        "monthlyRepaymentOfPrincipalAndInterest": 1194445,
-        "monthlyRepaymentAmount": 1194445,
-        "monthlyRepaymentInterest": 47778,
-        "totalLoanInterest": 17200080,
-        "examinationDate": "2023-11-11T02:41:22",
+        "totalLoanInterest": 309038445,
+        "examinationDate": "2023-11-15T14:03:04",
         "status": "APPROVED",
-        "createDate": "2023-11-11T02:40:30",
+        "createDate": "2023-11-15T14:02:46",
+        "repay": [],
         "ltv": 0.7,
         "dsr": 0.6
     }
@@ -209,4 +207,66 @@ http://43.201.224.74:8080
         "contractDate": "2023-11-11T02:24:55.277043"
     }
 }
+~~~
+
+
+</br>
+
+## 대출상환스케줄조회
+### 요청
+**POST**
+/check/1
+### 응답
+~~~json
+{
+    "statusCode": "200",
+    "message": "OK",
+    "timeStamp": "2023-11-15T14:04:54.514088",
+    "data": {
+        "id": 1,
+        "name": "홍길동",
+        "phone": "01040768612",
+        "email": "hong@gmail.com",
+        "address": "서울 마포구 성산동",
+        "addressDetail": "성산시영아파트 7동",
+        "loanKind": "HOUSE",
+        "otherYearPrincipalAndInterrest": 0,
+        "income": 50000000,
+        "asset": 630000000,
+        "amount": 430000000,
+        "loanRepaymentPeriod": 360,
+        "interestRateKind": "FIXED",
+        "interestRate": 4.0,
+        "totalLoanInterest": 309038445,
+        "examinationDate": "2023-11-15T14:03:04",
+        "status": "APPROVED",
+        "contractDate": "2023-11-15T14:03:26",
+        "createDate": "2023-11-15T14:02:46",
+        "repay": [
+            {
+                "createDate": "2023-11-15T14:03:26",
+                "updateDate": "2023-11-15T14:03:26",
+                "id": 1,
+                "round": 1,
+                "monthlyRepaymentOfPrincipalAndInterest": 2052886,
+                "monthlyRepaymentAmount": 619553,
+                "monthlyRepaymentInterest": 1433333,
+                "repaymentDate": "2023-12-15"
+            },
+            {
+                "createDate": "2023-11-15T14:03:26",
+                "updateDate": "2023-11-15T14:03:26",
+                "id": 2,
+                "round": 2,
+                "monthlyRepaymentOfPrincipalAndInterest": 2052886,
+                "monthlyRepaymentAmount": 621618,
+                "monthlyRepaymentInterest": 1431268,
+                "repaymentDate": "2024-01-15"
+            }
+            .
+            .
+            .
+        ],
+        "ltv": 0.7,
+        "dsr": 0.6
 ~~~
