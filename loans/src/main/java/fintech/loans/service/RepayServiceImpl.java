@@ -3,18 +3,21 @@ package fintech.loans.service;
 
 import fintech.loans.domain.Checker;
 import fintech.loans.domain.Repay;
+import fintech.loans.dto.RepayRequestDto;
+import fintech.loans.dto.eum.InterestRateEnum;
 import fintech.loans.repository.CheckRepository;
-import fintech.loans.repository.CounselRepository;
 import fintech.loans.repository.RepayRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -56,6 +59,65 @@ public class RepayServiceImpl implements RepayService{
     @Override
     public List<Repay> getRepays(Long checkId){
         return repayRepository.findAllByCheckerIdOrderByIdAsc(checkId);
+    }
+
+    @Override
+    public Repay setReapy(RepayRequestDto repayRequestDto) {
+
+        Optional<Checker> findCheckers = checkRepository.findById(repayRequestDto.getCheckId());
+        Checker findChecker = findCheckers.orElseThrow(()-> new RuntimeException("계약된 대출을 찾을 수 없습니다."));
+
+        Optional<Repay> findRepays = findChecker.getRepays()
+                .stream()
+                .filter(repay -> repay.getRound() == repayRequestDto.getRound())
+                .findFirst();
+
+        Repay findRepay = findRepays.orElseThrow(() -> new RuntimeException("회차를 찾을 수 없습니다."));
+
+        log.info("repayRequestDto = {}",repayRequestDto);
+        log.info("findChecker = {}",findChecker);
+        log.info("findRepay = {}",findRepay);
+        
+        if(findChecker.getInterestRateKind() == InterestRateEnum.FIXED && findRepay.getInterestRate() == null){
+
+            if(!Objects.equals(repayRequestDto.getMonthlyRepayment(), findRepay.getMonthlyRepaymentOfPrincipalAndInterest())){
+                throw new RuntimeException("상환금액이 부족합니다.");
+            }
+
+            findRepay.setInterestRate(findChecker.getInterestRate());
+            Long balanceAmount = null;
+
+            if(repayRequestDto.getRound() == 1){
+
+                findRepay.setTotalRepaymentAmount(findRepay.getMonthlyRepaymentAmount());
+
+                balanceAmount = findChecker.getAmount() - findRepay.getMonthlyRepaymentAmount();
+                findRepay.setBalanceAmount(balanceAmount);
+
+            } else if (repayRequestDto.getRound() > 1) {
+
+                //이전 회차 상환 정보
+                Optional<Repay> beforeRepays = findChecker.getRepays()
+                        .stream()
+                        .filter(repay -> repay.getRound() == (repayRequestDto.getRound() - 1))
+                        .findFirst();
+
+                Repay beforeRepay = beforeRepays.orElse(null);
+                log.info("beforeRepay = {}",beforeRepay);
+                if(beforeRepay == null || beforeRepay.getInterestRate() == null){
+                    throw new RuntimeException("이전 상환 정보를 찾을 수 없습니다.");
+                }
+
+                Long totalRepaymentAmount = beforeRepay.getTotalRepaymentAmount() + findRepay.getMonthlyRepaymentAmount();
+                findRepay.setTotalRepaymentAmount(totalRepaymentAmount);
+
+                balanceAmount = beforeRepay.getBalanceAmount() - findRepay.getMonthlyRepaymentAmount();
+                findRepay.setBalanceAmount(balanceAmount);
+
+            }
+        }
+
+        return findRepay;
     }
 
 }

@@ -9,4 +9,7 @@ import java.util.List;
 public interface RepayRepository extends JpaRepository<Repay,Long> {
 
     List<Repay> findAllByCheckerIdOrderByIdAsc(Long checkerId);
+
+    Repay findByCheckerIdAndRoundOrderByRoundAsc(Long checkerId,Integer round);
+
 }

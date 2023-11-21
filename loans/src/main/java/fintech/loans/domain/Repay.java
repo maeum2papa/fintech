@@ -51,4 +51,5 @@ public class Repay extends Date {
     @Column(columnDefinition = "DATE")
     private LocalDate repaymentDate;
 
+
 }
