@@ -113,7 +113,7 @@ public class CheckController {
         log.info("findChecker = {}",findChecker);
 
         if(findChecker == null){
-            throw new RuntimeException("대출 신청 데이터가 없습니다.");
+            throw new RuntimeException("대출 신청 번호 "+id+"를 찾을 수 없습니다.");
         }
 
 
@@ -124,7 +124,7 @@ public class CheckController {
             !(findChecker.getStatus() == StatusEnum.APPROVED &&
             Objects.equals(findChecker.getContractDate().toLocalDate(), LocalDate.now()))
         ){
-            throw new RuntimeException("대출 계약중 문제가 발생했습니다.");
+            throw new RuntimeException("대출 신청 번호 "+id+"를 계약중 문제가 발생했습니다.");
         }
 
         //총이자계산 및 회차별 상환 테이블

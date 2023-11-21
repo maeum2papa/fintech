@@ -51,7 +51,7 @@ public class RepayServiceImpl implements RepayService{
             }
 
         }else{
-            throw new RuntimeException("상환 스케줄 생성 오류가 발생하였습니다.");
+            throw new RuntimeException("계약번호 "+checker.getId()+" 대출의 상환 스케줄 생성 오류가 발생하였습니다.");
         }
 
     }
@@ -65,14 +65,14 @@ public class RepayServiceImpl implements RepayService{
     public Repay setReapy(RepayRequestDto repayRequestDto) {
 
         Optional<Checker> findCheckers = checkRepository.findById(repayRequestDto.getCheckId());
-        Checker findChecker = findCheckers.orElseThrow(()-> new RuntimeException("계약된 대출을 찾을 수 없습니다."));
+        Checker findChecker = findCheckers.orElseThrow(()-> new RuntimeException("계약번호 "+repayRequestDto.getCheckId()+"의 대출을 찾을 수 없습니다."));
 
         Optional<Repay> findRepays = findChecker.getRepays()
                 .stream()
                 .filter(repay -> repay.getRound() == repayRequestDto.getRound())
                 .findFirst();
 
-        Repay findRepay = findRepays.orElseThrow(() -> new RuntimeException("회차를 찾을 수 없습니다."));
+        Repay findRepay = findRepays.orElseThrow(() -> new RuntimeException("상환 " + repayRequestDto.getRound() + "회차를 찾을 수 없습니다."));
 
         log.info("repayRequestDto = {}",repayRequestDto);
         log.info("findChecker = {}",findChecker);
@@ -81,7 +81,7 @@ public class RepayServiceImpl implements RepayService{
         if(findChecker.getInterestRateKind() == InterestRateEnum.FIXED && findRepay.getInterestRate() == null){
 
             if(!Objects.equals(repayRequestDto.getMonthlyRepayment(), findRepay.getMonthlyRepaymentOfPrincipalAndInterest())){
-                throw new RuntimeException("상환금액이 부족합니다.");
+                throw new RuntimeException("상환금액은 "+repayRequestDto.getMonthlyRepayment()+"원이 아닌 "+findRepay.getMonthlyRepaymentOfPrincipalAndInterest()+"원 입니다.");
             }
 
             findRepay.setInterestRate(findChecker.getInterestRate());
@@ -105,7 +105,7 @@ public class RepayServiceImpl implements RepayService{
                 Repay beforeRepay = beforeRepays.orElse(null);
                 log.info("beforeRepay = {}",beforeRepay);
                 if(beforeRepay == null || beforeRepay.getInterestRate() == null){
-                    throw new RuntimeException("이전 상환 정보를 찾을 수 없습니다.");
+                    throw new RuntimeException("이전 회차인 "+(repayRequestDto.getRound() - 1)+"회차 상환 정보를 찾을 수 없습니다.");
                 }
 
                 Long totalRepaymentAmount = beforeRepay.getTotalRepaymentAmount() + findRepay.getMonthlyRepaymentAmount();
