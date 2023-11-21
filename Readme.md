@@ -1,5 +1,24 @@
-## AWS EC2 + Docker
-http://43.201.224.74:8080
+## 테스트 환경설정
+1. 
+~~~sh
+sudo docker pull mysql
+~~~
+
+2.
+~~~sh
+sudo docker run --name mysql-container -p 3306:3306 --network dockernetwork -e MYSQL_DATABASE=mydb -e MYSQL_ROOT_PASSWORD=root1234\!\! -e TZ=Asia/Seoul -d mysql
+~~~
+ 
+4.
+~~~sh
+docker pull maeum2papa/loans:latest
+~~~
+
+3.
+~~~sh
+sudo docker run -p 8080:8080 --name loans --network dockernetwork -d maeum2papa/loans
+~~~
+
 
 ## 상담저장
 ### 요청
